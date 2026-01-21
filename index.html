@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enerji Master Pro - Elektrik tüketiminizi hesaplayın, tasarruf edin!">
+    <meta name="theme-color" content="#2E7D32">
+    <title>Enerji Master Pro</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="assets/icon-512.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+    
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="screen active">
+        <div class="welcome-content">
+            <div class="logo-container">
+                <img src="assets/logo.png" alt="Enerji Master Logo" class="welcome-logo">
+            </div>
+            <h1 class="welcome-title">Enerji Master</h1>
+            <p class="welcome-subtitle">Watt'ını Bil, Cebini Koru.</p>
+            <button class="btn-primary btn-large" onclick="startApp()">
+                🚀 Analizi Başlat
+            </button>
+        </div>
+    </div>
+    
+    <!-- Main App Screen -->
+    <div id="mainScreen" class="screen">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <img src="assets/logo.png" alt="Logo" class="header-logo">
+                <h2>Enerji Master Pro</h2>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Karanlık Mod">
+                    🌙
+                </button>
+            </div>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="app-nav">
+            <button class="nav-btn active" onclick="showPage('analysis')" id="navAnalysis">
+                📊 Fatura Analizi
+            </button>
+            <button class="nav-btn" onclick="showPage('tips')" id="navTips">
+                📚 Tasarruf Sırları
+            </button>
+        </nav>
+        
+        <!-- Analysis Page -->
+        <div id="analysisPage" class="page active">
+            <div class="container">
+                <!-- Settings Card -->
+                <div class="card settings-card">
+                    <h3>⚙️ Ayarlar</h3>
+                    <div class="input-group">
+                        <label for="unitPrice">Elektrik Birim Fiyatı (TL/kWh):</label>
+                        <input type="number" id="unitPrice" value="2.59" step="0.01" min="0" onchange="updateCalculations()">
+                    </div>
+                </div>
+                
+                <!-- Add Device Card -->
+                <div class="card">
+                    <h3>➕ Cihaz Ekle</h3>
+                    
+                    <div class="input-group">
+                        <label for="deviceType">Cihaz Türü:</label>
+                        <select id="deviceType" onchange="updateDeviceForm()">
+                            <option value="fridge">Buzdolabı</option>
+                            <option value="washing">Çamaşır Makinesi</option>
+                            <option value="dishwasher">Bulaşık Makinesi</option>
+                            <option value="ac">Klima</option>
+                            <option value="tv">TV</option>
+                            <option value="light">Aydınlatma (Ampul)</option>
+                            <option value="other">Fırın/Ütü/Süpürge</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Dynamic Form Fields -->
+                    <div id="deviceFormFields"></div>
+                    
+                    <button class="btn-primary" onclick="addDevice()">
+                        🚀 Cihazı Listeye Ekle
+                    </button>
+                </div>
+                
+                <!-- Total Cost Display -->
+                <div id="totalCostCard" class="card total-card" style="display: none;">
+                    <p class="total-label">📊 Toplam Tahmini Fatura</p>
+                    <h2 class="total-amount" id="totalAmount">0.00 TL</h2>
+                </div>
+                
+                <!-- Chart -->
+                <div id="chartCard" class="card" style="display: none;">
+                    <h3>📈 Cihaz Bazlı Dağılım</h3>
+                    <canvas id="costChart"></canvas>
+                </div>
+                
+                <!-- Device List -->
+                <div id="deviceListCard" class="card" style="display: none;">
+                    <h3>📋 Cihaz Listesi</h3>
+                    <div id="deviceList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tips Page -->
+        <div id="tipsPage" class="page">
+            <div class="container">
+                <div class="card">
+                    <h3>📖 Tasarruf Kütüphanesi</h3>
+                    <div class="tips-content">
+                        <div class="tip-item">
+                            <div class="tip-icon">💡</div>
+                            <div class="tip-text">
+                                <h4>LED Ampul Kullanın</h4>
+                                <p>Eski ampullerinizi LED'lerle değiştirerek %80'e varan tasarruf sağlayabilirsiniz.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">❄️</div>
+                            <div class="tip-text">
+                                <h4>Buzdolabı Sıcaklığı</h4>
+                                <p>Buzdolabınızı 4-5°C, dondurucuyu -18°C'de tutun. Daha soğuk gereksiz enerji harcar.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">🌡️</div>
+                            <div class="tip-text">
+                                <h4>Klima Kullanımı</h4>
+                                <p>Klimayı 24-26°C'de kullanın. Her 1°C düşük ayar %10 daha fazla enerji tüketir.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">👕</div>
+                            <div class="tip-text">
+                                <h4>Çamaşır Makinesi</h4>
+                                <p>Tam yük yıkayın ve mümkünse düşük sıcaklık programları kullanın.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">🔌</div>
+                            <div class="tip-text">
+                                <h4>Bekleme Modunu Kapatın</h4>
+                                <p>Kullanmadığınız cihazları prizden çekin. Bekleme modu bile enerji tüketir.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item">
+                            <div class="tip-icon">🌞</div>
+                            <div class="tip-text">
+                                <h4>Doğal Işık</h4>
+                                <p>Gün ışığından maksimum yararlanın. Perdeleri açık tutun.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="app-footer">
+            <button class="btn-secondary" onclick="logout()">
+                🚪 Güvenli Çıkış
+            </button>
+        </footer>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
