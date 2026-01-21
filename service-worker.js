@@ -1,12 +1,12 @@
 const CACHE_NAME = 'enerji-master-v1';
 const urlsToCache = [
-    '/enerjimaster/',
-    '/enerjimaster/index.html',
-    '/enerjimaster/styles.css',
-    '/enerjimaster/app.js',
-    '/enerjimaster/manifest.json',
-    '/enerjimaster/assets/logo.png',
-    '/enerjimaster/assets/icon-512.png',
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
+    './manifest.json',
+    './assets/logo.png',
+    './assets/icon-512.png',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap',
     'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'
 ];
